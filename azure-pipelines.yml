@@ -14,7 +14,6 @@ stages:
         name: setvarStep
       - powershell: |
           Write-Host "value of jobContainsPkgs: $(jobContainsPkgs)"
-          Write-Host "value of stageContainsPkgs: $(stageContainsPkgs)"
     - job: readvars_job
       dependsOn: setvars_job
       pool:
