@@ -29,11 +29,11 @@ stages:
           Write-Host "value of stageContainsPkgs: $env:stageContainsPkgs"
       - powershell: |
           Write-Host "jobContainsPkgs is true and crosses jobs"
-        condition: eq( $[dependencies.setvars_job.outputs['setvarStep.jobContainsPkgs']], 'true')
+        condition: eq( dependencies.setvars_job.outputs['setvarStep.jobContainsPkgs'], 'true')
           
       - powershell: |
           Write-Host "stageContainsPkgs is true and crosses jobs"
-        condition: eq( $[dependencies.setvars_job.outputs['setvarStep.stageContainsPkgs']], 'true')
+        condition: eq( dependencies.setvars_job.outputs['setvarStep.stageContainsPkgs'], 'true')
 
   - stage: readvars_stage
     dependsOn: setvars_stage
@@ -53,9 +53,9 @@ stages:
           Write-Host "value of stageContainsPkgs: $env:stageContainsPkgs"
       - powershell: |
           Write-Host "jobContainsPkgs is true and crosses stages"
-        condition: eq( $[stagedependencies.setvars_stage.setvars_job.outputs['setvarStep.jobContainsPkgs']], 'true')
+        condition: eq( stagedependencies.setvars_stage.setvars_job.outputs['setvarStep.jobContainsPkgs'], 'true')
       - powershell: |
           Write-Host "stageContainsPkgs is true and crosses stages"
-        condition: eq( $[stagedependencies.setvars_stage.setvars_job.outputs['setvarStep.stageContainsPkgs']], 'true')
+        condition: eq( stagedependencies.setvars_stage.setvars_job.outputs['setvarStep.stageContainsPkgs'], 'true')
 
         
