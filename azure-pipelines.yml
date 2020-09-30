@@ -1,0 +1,63 @@
+stages:
+  - stage: setvars_stage
+    jobs:
+    - job: setvars_job
+      pool:
+        name: Hosted VS2017
+      variables:
+        system.debug: true
+        agent.diagnostic: true
+      steps:
+      - powershell: |
+            Write-Host "##vso[task.setvariable variable=jobContainsPkgs]true"
+            Write-Host "##vso[task.setvariable variable=stageContainsPkgs;isOutput=true]true"
+        name: setvarStep
+      - powershell: |
+          Write-Host "value of jobContainsPkgs: $(jobContainsPkgs)"
+          Write-Host "value of stageContainsPkgs: $(stageContainsPkgs)"
+    - job: readvars_job
+      dependsOn: setvars_job
+      pool:
+        name: Hosted VS2017
+      variables:
+        system.debug: true
+        agent.diagnostic: true
+        jobContainsPkgs: $[dependencies.setvars_job.outputs['setvarStep.jobContainsPkgs']]
+        stageContainsPkgs: $[dependencies.setvars_job.outputs['setvarStep.stageContainsPkgs']]
+      steps:
+      - powershell: |
+          Write-Host "value of jobContainsPkgs: $env:jobContainsPkgs"
+          Write-Host "value of stageContainsPkgs: $env:stageContainsPkgs"
+      - ${{ if eq(variables['jobContainsPkgs'], true) }}:
+        - powershell: |
+            Write-Host "jobContainsPkgs is true and crosses jobs"
+            
+      - ${{ if eq(variables['stageContainsPkgs'], true) }}:
+        - powershell: |
+            Write-Host "stageContainsPkgs is true and crosses jobs"
+
+  - stage: readvars_stage
+    dependsOn: setvars_stage
+    jobs:
+    - job: readvars_job
+      pool:
+        name: Hosted VS2017
+      variables:
+        system.debug: true
+        agent.diagnostic: true
+        jobContainsPkgs: $[dependencies.setvars_job.outputs['setvarStep.jobContainsPkgs']]
+        stageContainsPkgs: $[dependencies.setvars_job.outputs['setvarStep.stageContainsPkgs']]
+
+      steps:
+      - powershell: |
+          Write-Host "value of jobContainsPkgs: $env:jobContainsPkgs"
+          Write-Host "value of stageContainsPkgs: $env:stageContainsPkgs"
+      - ${{ if eq(variables['jobContainsPkgs'], true) }}:
+        - powershell: |
+            Write-Host "jobContainsPkgs is true and crosses stages"
+            
+      - ${{ if eq(variables['stageContainsPkgs'], true) }}:
+        - powershell: |
+            Write-Host "stageContainsPkgs is true and crosses stages"
+
+        
