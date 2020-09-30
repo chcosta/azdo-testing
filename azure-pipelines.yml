@@ -31,7 +31,7 @@ stages:
         - powershell: |
             Write-Host "jobContainsPkgs is true and crosses jobs"
             
-      - ${{ if eq(variables['stageContainsPkgs'], true) }}:
+      - ${{ if eq(variables.stageContainsPkgs, true) }}:
         - powershell: |
             Write-Host "stageContainsPkgs is true and crosses jobs"
 
@@ -44,8 +44,8 @@ stages:
       variables:
         system.debug: true
         agent.diagnostic: true
-        jobContainsPkgs: $[dependencies.setvars_job.outputs['setvarStep.jobContainsPkgs']]
-        stageContainsPkgs: $[dependencies.setvars_job.outputs['setvarStep.stageContainsPkgs']]
+        jobContainsPkgs: $[stagedependencies.setvars_stage.setvars_job.outputs['setvarStep.jobContainsPkgs']]
+        stageContainsPkgs: $[stagedependencies.setvars_stage.setvars_job.outputs['setvarStep.stageContainsPkgs']]
 
       steps:
       - powershell: |
