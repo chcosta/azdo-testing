@@ -29,11 +29,11 @@ stages:
           Write-Host "value of stageContainsPkgs: $env:stageContainsPkgs"
       - powershell: |
           Write-Host "jobContainsPkgs is true and crosses jobs"
-        condition: and(succeeded(), eq( dependencies.setvars_job.outputs['setvarStep.jobContainsPkgs'], 'true'))
+        condition: and(succeeded(), eq( variables['jobContainsPkgs'], 'true'))
           
       - powershell: |
           Write-Host "stageContainsPkgs is true and crosses jobs"
-        condition: and(succeeded(), eq( dependencies.setvars_job.outputs['setvarStep.stageContainsPkgs'], 'true'))
+        condition: and(succeeded(), eq( variables['stageContainsPkgs'], 'true'))
 
   - stage: readvars_stage
     dependsOn: setvars_stage
